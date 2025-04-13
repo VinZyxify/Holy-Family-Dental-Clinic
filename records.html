@@ -2854,6 +2854,29 @@ document.addEventListener('DOMContentLoaded', function() {
         to { opacity: 1; transform: translateY(0); }
     }
     
+
+
+
+    .time-slot.unavailable {
+    background-color: #f5f5f5;
+    color: #999;
+    cursor: not-allowed;
+    position: relative;
+    opacity: 0.7;
+}
+
+.time-slot.unavailable::after {
+    content: "Past Time";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 10px;
+    color: #ff5555;
+    white-space: nowrap;
+}
+
+    
 </style>
 
 
@@ -2862,6 +2885,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 <script>
+
+    
     document.addEventListener('DOMContentLoaded', function() {
     // New Appointment Modal Functionality
     const newAppointmentBtn = document.getElementById('newAppointmentBtn');
@@ -2885,6 +2910,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const prevMonthBtn = document.getElementById('prev-month');
     const nextMonthBtn = document.getElementById('next-month');
     const timeSlots = document.querySelectorAll('.time-slot');
+    // Track booked appointments (in a real app, this would come from a database)
+const bookedAppointments = [
+    // Format: { date: Date object, time: "9:00 AM", status: "pending/completed" }
+];
     
     let currentMonth = new Date().getMonth();
     let currentYear = new Date().getFullYear();
