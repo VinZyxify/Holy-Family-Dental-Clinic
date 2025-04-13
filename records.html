@@ -2902,6 +2902,7 @@ function generateCalendar(month, year) {
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time part for comparison
 
     currentMonthDisplay.textContent = new Date(year, month).toLocaleDateString('en-US', {
         month: 'long',
@@ -2922,39 +2923,98 @@ function generateCalendar(month, year) {
         dateCell.textContent = day;
 
         const cellDate = new Date(year, month, day);
-        dateCell.dataset.date = cellDate.toISOString();
+        cellDate.setHours(0, 0, 0, 0); // Reset time part for comparison
 
+        // Only disable dates before today
         if (cellDate < today) {
             dateCell.classList.add('disabled-date');
         } else if (cellDate.toDateString() === today.toDateString()) {
             dateCell.classList.add('today');
         }
 
-        dateCell.addEventListener('click', function () {
-    if (!this.classList.contains('disabled-date')) {
-        // Remove 'selected' class from all dates
-        document.querySelectorAll('.calendar-date').forEach(d => d.classList.remove('selected'));
-        
-        // Add 'selected' class to the clicked date
-        this.classList.add('selected');
-        
-        // Update the selectedDate variable - this is the key fix
-        const day = parseInt(this.textContent);
-        selectedDate = new Date(currentYear, currentMonth, day);
-        
-        // Update the displayed selected date
-        selectedDateText.textContent = selectedDate.toLocaleDateString('en-US', {
-            weekday: 'long',
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric'
+        dateCell.addEventListener('click', function() {
+            if (!this.classList.contains('disabled-date')) {
+                document.querySelectorAll('.calendar-date').forEach(d => d.classList.remove('selected'));
+                this.classList.add('selected');
+                
+                const day = parseInt(this.textContent);
+                selectedDate = new Date(currentYear, currentMonth, day);
+                
+                selectedDateText.textContent = selectedDate.toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+
+                // Update time slot availability when date is selected
+                updateTimeSlotsAvailability(selectedDate);
+            }
         });
-    }
-});
 
         calendarDates.appendChild(dateCell);
     }
 }
+
+// New function to update time slot availability
+function updateTimeSlotsAvailability(selectedDate) {
+    const now = new Date();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Reset all time slots
+    timeSlots.forEach(slot => {
+        slot.classList.remove('unavailable');
+        slot.disabled = false;
+    });
+
+    // If selected date is today, disable past time slots
+    if (selectedDate.toDateString() === today.toDateString()) {
+        timeSlots.forEach(slot => {
+            const slotTime = slot.textContent;
+            const [time, period] = slotTime.split(' ');
+            let [hours, minutes] = time.split(':').map(Number);
+            
+            // Convert to 24-hour format
+            if (period === 'PM' && hours !== 12) {
+                hours += 12;
+            } else if (period === 'AM' && hours === 12) {
+                hours = 0;
+            }
+            
+            // Create a Date object for the time slot
+            const slotDateTime = new Date(now);
+            slotDateTime.setHours(hours, minutes, 0, 0);
+            
+            // Disable if time slot is in the past
+            if (slotDateTime < now) {
+                slot.classList.add('unavailable');
+                slot.disabled = true;
+            }
+        });
+    }
+}
+
+// Initialize time slots when modal opens
+document.getElementById('newAppointmentBtn').addEventListener('click', function() {
+    newAppointmentModal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    initializeCalendar();
+    
+    // Reset selected date and time
+    selectedDate = null;
+    selectedTime = null;
+    document.querySelectorAll('.calendar-date.selected').forEach(el => el.classList.remove('selected'));
+    document.querySelectorAll('.time-slot.active').forEach(el => el.classList.remove('active'));
+    selectedDateText.textContent = 'No date selected';
+    selectedTimeText.textContent = 'No time selected';
+    
+    // Enable all time slots initially
+    timeSlots.forEach(slot => {
+        slot.classList.remove('unavailable');
+        slot.disabled = false;
+    });
+});
 
     // Month navigation
     prevMonthBtn.addEventListener('click', function() {
