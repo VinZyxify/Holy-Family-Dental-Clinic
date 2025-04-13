@@ -2976,57 +2976,9 @@ function generateCalendar(month, year) {
                     year: 'numeric'
                 });
 
-                function updateTimeSlotsAvailability(selectedDate) {
-    const now = new Date();
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    // Reset all time slots
-    timeSlots.forEach(slot => {
-        slot.classList.remove('unavailable', 'booked');
-        slot.disabled = false;
-    });
-
-    // If selected date is today, disable past time slots
-    if (selectedDate.toDateString() === today.toDateString()) {
-        timeSlots.forEach(slot => {
-            const slotTime = slot.textContent;
-            const [time, period] = slotTime.split(' ');
-            let [hours, minutes] = time.split(':').map(Number);
-            
-            // Convert to 24-hour format
-            if (period === 'PM' && hours !== 12) {
-                hours += 12;
-            } else if (period === 'AM' && hours === 12) {
-                hours = 0;
+                // Update time slot availability when date is selected
+                updateTimeSlotsAvailability(selectedDate);
             }
-            
-            // Create a Date object for the time slot
-            const slotDateTime = new Date(now);
-            slotDateTime.setHours(hours, minutes, 0, 0);
-            
-            // Disable if time slot is in the past
-            if (slotDateTime < now) {
-                slot.classList.add('unavailable');
-                slot.disabled = true;
-            }
-        });
-    }
-
-    // Check for booked appointments on this date
-    const selectedDateStr = selectedDate.toDateString();
-    bookedAppointments.forEach(appointment => {
-        if (appointment.date.toDateString() === selectedDateStr) {
-            timeSlots.forEach(slot => {
-                if (slot.textContent === appointment.time) {
-                    slot.classList.add('booked');
-                    slot.disabled = true;
-                    slot.title = `Booked (Status: ${appointment.status})`;
-                }
-            });
-        }
-    });
-}
         });
 
         calendarDates.appendChild(dateCell);
