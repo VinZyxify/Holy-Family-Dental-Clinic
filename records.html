@@ -2888,6 +2888,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     
     document.addEventListener('DOMContentLoaded', function() {
+
+        const bookedAppointments = [
+        // Format: { date: Date object, time: "9:00 AM", status: "pending/completed" }
+        { date: new Date(2024, 2, 15), time: "9:00 AM", status: "pending" },
+        { date: new Date(2024, 2, 15), time: "10:00 AM", status: "completed" },
+        { date: new Date(2024, 2, 16), time: "2:00 PM", status: "pending" }
+    ];
+
     // New Appointment Modal Functionality
     const newAppointmentBtn = document.getElementById('newAppointmentBtn');
     const newAppointmentModal = document.getElementById('newAppointmentModal');
@@ -2910,10 +2918,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const prevMonthBtn = document.getElementById('prev-month');
     const nextMonthBtn = document.getElementById('next-month');
     const timeSlots = document.querySelectorAll('.time-slot');
-    // Track booked appointments (in a real app, this would come from a database)
-const bookedAppointments = [
-    // Format: { date: Date object, time: "9:00 AM", status: "pending/completed" }
-];
+    
     
     let currentMonth = new Date().getMonth();
     let currentYear = new Date().getFullYear();
@@ -3021,6 +3026,30 @@ function updateTimeSlotsAvailability(selectedDate) {
                 slot.disabled = true;
             }
         });
+    }
+    // Check for booked appointments on the selected date
+        const bookingsForDate = bookedAppointments.filter(appt => 
+            appt.date.toDateString() === selectedDate.toDateString()
+        );
+    // Mark booked time slots as unavailable
+        bookingsForDate.forEach(booking => {
+            timeSlots.forEach(slot => {
+                if (slot.textContent === booking.time) {
+                    markTimeSlotUnavailable(slot, "Booked");
+                }
+            });
+        });
+    }
+
+    function markTimeSlotUnavailable(slot, reason) {
+        slot.classList.add('unavailable');
+        slot.disabled = true;
+        
+        // Add tooltip with reason
+        const tooltip = document.createElement('span');
+        tooltip.className = 'unavailable-tooltip';
+        tooltip.textContent = reason;
+        slot.appendChild(tooltip);
     }
 }
 
