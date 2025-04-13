@@ -994,7 +994,7 @@
     
     .sort-btn:hover, .filter-btn:hover {
         background: rgba(0, 191, 255, 0.1);
-        color: var(--sidebar-active);
+        color: var (--sidebar-active);
     }
     
     .sort-btn.active {
@@ -1166,6 +1166,106 @@
 
 
 
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+        .dashboard {
+            flex-direction: column;
+        }
+
+        .sidebar {
+            width: 100%;
+            height: auto;
+            position: relative;
+        }
+
+        .main-content {
+            padding: 20px;
+        }
+
+        .top-row {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .stats-container {
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .profile-container {
+            margin-top: 0;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .sidebar {
+            display: none;
+        }
+
+        .main-content {
+            padding: 15px;
+        }
+
+        .stat-card {
+            flex: 1 1 100%;
+        }
+
+        .profile-container {
+            flex: 1 1 100%;
+        }
+
+        .content-container {
+            flex-direction: column;
+        }
+
+        .left-panel, .right-panel {
+            flex: 1 1 100%;
+        }
+
+        .progress-gallery {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .header h1 {
+            font-size: 20px;
+        }
+
+        .btn {
+            font-size: 12px;
+            padding: 6px 10px;
+        }
+
+        .stat-value {
+            font-size: 18px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+        }
+
+        .profile-name {
+            font-size: 16px;
+        }
+
+        .profile-id {
+            font-size: 12px;
+        }
+
+        .card-header h2 {
+            font-size: 16px;
+        }
+
+        .filter-select {
+            font-size: 12px;
+        }
+
+        .time-slot {
+            font-size: 12px;
+            padding: 8px;
+        }
+    }
     </style>
 </head>
 <body>
@@ -1576,7 +1676,7 @@
                                         </td>
                                     </tr>
 
-                                    <tr class="appointment-row" data-id="5" style="border-bottom: 1px solid var(--border-color);">
+                                    <tr class="appointment-row" data-id="5" style="border-bottom: 1px solid var (--border-color);">
                                         <td style="padding: 12px;">June 1, 2023 - 9:30 AM</td>
                                         <td style="padding: 12px;">Pit and Fissure Sealants</td>
                                         <td style="padding: 12px;">₱1,500</td>
@@ -1679,137 +1779,48 @@
     
     
     <script>
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-document.addEventListener('DOMContentLoaded', function() {
-    const resetButton = document.getElementById('undoButton');
+document.addEventListener('DOMContentLoaded', function () {
     const table = document.querySelector('.treatment-history-container table tbody');
     const tableRows = Array.from(table.querySelectorAll('tr.appointment-row'));
+    const resetButton = document.getElementById('undoButton');
+    const sortButtons = document.querySelectorAll('.sort-btn');
+    const filterDropdowns = document.querySelectorAll('.filter-dropdown');
 
-    // Store the original order of rows for resetting
     const originalRowOrder = [...tableRows];
 
-    resetButton.addEventListener('click', function() {
-        // 1. Show all rows
-        tableRows.forEach(row => {
-            row.style.display = '';
-        });
+    // 🔁 Reset Button Handler
+    resetButton.addEventListener('click', function () {
+        // Show all rows
+        tableRows.forEach(row => row.style.display = '');
+        // Restore original order
+        originalRowOrder.forEach(row => table.appendChild(row));
 
-        // 2. Reset sorting - restore original order
-        originalRowOrder.forEach(row => {
-            table.appendChild(row);
-        });
-
-        // 3. Reset all sort buttons to default state
-        const sortButtons = document.querySelectorAll('.sort-btn');
+        // Reset sorting
         sortButtons.forEach(button => {
-            // Remove any direction attributes
             button.removeAttribute('data-direction');
-            button.classList.remove('active-sort', 'asc', 'desc');
-            
-            
-            // Reset icons
+            button.classList.remove('asc', 'desc', 'active-sort', 'active');
             const sortIcon = button.querySelector('.fa-sort');
             const sortUpIcon = button.querySelector('.fa-sort-up');
             const sortDownIcon = button.querySelector('.fa-sort-down');
-            
             if (sortIcon) sortIcon.style.display = 'inline-block';
             if (sortUpIcon) sortUpIcon.style.display = 'none';
             if (sortDownIcon) sortDownIcon.style.display = 'none';
-            
-            // Remove active class if present
-            button.classList.remove('active', 'asc', 'desc');
         });
 
-        // 4. Visual feedback
-        const originalText = resetButton.innerHTML;
-        resetButton.innerHTML = '<i class="fas fa-undo"></i> Filters Reset';
-        resetButton.style.backgroundColor = '#4CAF50';
-        resetButton.style.color = 'white';
-        
-        setTimeout(() => {
-            resetButton.innerHTML = originalText;
-            resetButton.style.backgroundColor = '';
-            resetButton.style.color = '';
-        }, 2000);
-    });
-
-    
-
-    // Make sure to store the original order when the page loads
-    // This should be at the beginning of your script
-    if (!window.originalAppointmentOrder) {
-        window.originalAppointmentOrder = [...tableRows];
-    }
-});
-
-
-
-
-
-
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Reset button functionality
-    const resetButton = document.getElementById('undoButton');
-    
-    resetButton.addEventListener('click', function() {
-        // 1. Reset all table rows
-        const tableRows = document.querySelectorAll('.appointment-row');
-        tableRows.forEach(row => {
-            row.style.display = '';
-        });
-
-        // 2. Reset all filter dropdowns
-        const filterDropdowns = document.querySelectorAll('.filter-dropdown');
+        // Reset filters
         filterDropdowns.forEach(dropdown => {
             const button = dropdown.querySelector('.filter-btn');
-            const dropdownContent = dropdown.querySelector('.dropdown-content');
-            const items = dropdownContent.querySelectorAll('div');
-            
-            // Reset button appearance
+            const items = dropdown.querySelectorAll('.dropdown-content div');
             button.innerHTML = '<i class="fas fa-filter"></i>';
             button.classList.remove('active-filter-btn');
-            
-            // Remove active classes from dropdown items
-            items.forEach(item => {
-                item.classList.remove('active-filter');
-            });
+            items.forEach(item => item.classList.remove('active-filter'));
         });
 
-        // 3. Reset sorting
-        const sortButtons = document.querySelectorAll('.sort-btn');
-        sortButtons.forEach(button => {
-            button.removeAttribute('data-direction');
-            button.classList.remove('asc', 'desc');
-            const sortIcon = button.querySelector('.fa-sort');
-            const sortUpIcon = button.querySelector('.fa-sort-up');
-            const sortDownIcon = button.querySelector('.fa-sort-down');
-            
-            if (sortIcon) sortIcon.style.display = 'inline-block';
-            if (sortUpIcon) sortUpIcon.style.display = 'none';
-            if (sortDownIcon) sortDownIcon.style.display = 'none';
-        });
-
-        // 4. Visual feedback
+        // Visual feedback
         const originalText = resetButton.innerHTML;
         resetButton.innerHTML = '<i class="fas fa-check"></i> Reset Complete';
         resetButton.style.backgroundColor = '#4CAF50';
         resetButton.style.color = 'white';
-        
         setTimeout(() => {
             resetButton.innerHTML = originalText;
             resetButton.style.backgroundColor = '';
@@ -1817,229 +1828,121 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 2000);
     });
 
-    // Filter selection functionality
-    const filterDropdowns = document.querySelectorAll('.filter-dropdown');
-    
-    filterDropdowns.forEach(dropdown => {
-        const button = dropdown.querySelector('.filter-btn');
-        const dropdownContent = dropdown.querySelectorAll('.dropdown-content div');
-        
-        dropdownContent.forEach(item => {
-            item.addEventListener('click', function() {
-                // Remove active classes from all items in this dropdown
-                dropdownContent.forEach(i => i.classList.remove('active-filter'));
-                
-                // Add active class to clicked item
-                this.classList.add('active-filter');
-                
-                // Update button to show selected filter
-                const filterValue = this.getAttribute('data-value');
-                const filterText = this.textContent;
-                
-                if (filterValue !== 'all') {
-                    button.innerHTML = `
-                        <span class="filter-label">${filterText}</span>
-                        <i class="fas fa-caret-down"></i>
-                    `;
-                    button.classList.add('active-filter-btn');
-                } else {
-                    button.innerHTML = `<i class="fas fa-filter"></i>`;
-                    button.classList.remove('active-filter-btn');
-                }
-            });
-        });
-    });
-});
-
-
-
-// Add active state to selected filter
-const filterDropdowns = document.querySelectorAll('.filter-dropdown');
-    
-    filterDropdowns.forEach(dropdown => {
-        const button = dropdown.querySelector('.filter-btn');
-        const dropdownContent = dropdown.querySelector('.dropdown-content');
-        const items = dropdownContent.querySelectorAll('div');
-        
-        items.forEach(item => {
-            item.addEventListener('click', function() {
-                // Remove active classes from all items in this dropdown
-                items.forEach(i => i.classList.remove('active-filter'));
-                
-                // Add active class to clicked item
-                this.classList.add('active-filter');
-                
-                // Update button to show selected filter
-                const filterValue = this.getAttribute('data-value');
-                const filterText = this.textContent;
-                
-                if (filterValue !== 'all') {
-                    button.innerHTML = `
-                        <span class="filter-label">${filterText}</span>
-                        <i class="fas fa-caret-down"></i>
-                    `;
-                    button.classList.add('active-filter-btn');
-                } else {
-                    button.innerHTML = `<i class="fas fa-filter"></i>`;
-                    button.classList.remove('active-filter-btn');
-                }
-            });
-        });
-    });
-
-    document.addEventListener('DOMContentLoaded', function () {
-    const closeModalButtons = document.querySelectorAll('.close-modal'); // Select all close-modal buttons
-
-    closeModalButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const modal = this.closest('.modal'); // Find the closest modal container
-            if (modal) {
-                modal.style.display = 'none'; // Hide the modal
-                document.body.style.overflow = 'auto'; // Re-enable scrolling
-            }
-        });
-    });
-
-    // Close modal when clicking outside the modal content
-    window.addEventListener('click', function (event) {
-        const openModals = document.querySelectorAll('.modal');
-        openModals.forEach(modal => {
-            if (event.target === modal) {
-                modal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            }
-        });
-    });
-});
-
-        // Update the clock in real-time
-        function updateClock() {
-        const now = new Date();
-        
-        // Digital clock in the stat card
-        let hours = now.getHours();
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-        hours = hours % 12;
-        hours = hours ? hours : 12; // Convert 0 to 12
-        const minutes = now.getMinutes().toString().padStart(2, '0');
-        const seconds = now.getSeconds().toString().padStart(2, '0');
-        
-        document.querySelector('.hours').textContent = hours;
-        document.querySelector('.minutes').textContent = minutes;
-        document.querySelector('.seconds').textContent = seconds;
-        document.querySelector('.time-ampm').textContent = ampm;
-        
-        // Analog clock
-        const hourHand = document.querySelector('.clock-hour-hand');
-        const minuteHand = document.querySelector('.clock-minute-hand');
-        const secondHand = document.querySelector('.clock-second-hand');
-        
-        const hourDegrees = (hours * 30) + (now.getMinutes() * 0.5); // 360° / 12 hours
-        const minuteDegrees = now.getMinutes() * 6; // 360° / 60 minutes
-        const secondDegrees = now.getSeconds() * 6; // 360° / 60 seconds
-        
-        hourHand.style.transform = `rotate(${hourDegrees}deg)`;
-        minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
-        secondHand.style.transform = `rotate(${secondDegrees}deg)`;
-    }
-    
-    // Update the clock immediately and then every second
-    updateClock();
-    setInterval(updateClock, 1000);
-
-
-
-
-
-
-    //drop down filter
-
-    document.addEventListener('DOMContentLoaded', function () {
-    const table = document.querySelector('.treatment-history-container table tbody');
-    const rows = Array.from(table.querySelectorAll('tr'));
-
-
-    
-
-    // Sorting functionality
-    const sortButtons = document.querySelectorAll('.sort-btn');
+    // 🔍 Sorting Logic
     sortButtons.forEach(button => {
         button.addEventListener('click', function () {
             const sortField = this.getAttribute('data-sort');
             const direction = this.getAttribute('data-direction') === 'asc' ? 'desc' : 'asc';
             this.setAttribute('data-direction', direction);
 
-            
-
-            rows.sort((a, b) => {
-                const aValue = a.querySelector(`td:nth-child(${getColumnIndex(sortField)})`).textContent.trim();
-                const bValue = b.querySelector(`td:nth-child(${getColumnIndex(sortField)})`).textContent.trim();
+            tableRows.sort((a, b) => {
+                const aVal = a.querySelector(`td:nth-child(${getColumnIndex(sortField)})`).textContent.trim();
+                const bVal = b.querySelector(`td:nth-child(${getColumnIndex(sortField)})`).textContent.trim();
 
                 if (sortField === 'cost') {
                     return direction === 'asc'
-                        ? parseFloat(aValue.replace(/[^0-9.-]+/g, '')) - parseFloat(bValue.replace(/[^0-9.-]+/g, ''))
-                        : parseFloat(bValue.replace(/[^0-9.-]+/g, '')) - parseFloat(aValue.replace(/[^0-9.-]+/g, ''));
+                        ? parseFloat(aVal.replace(/[^0-9.]/g, '')) - parseFloat(bVal.replace(/[^0-9.]/g, ''))
+                        : parseFloat(bVal.replace(/[^0-9.]/g, '')) - parseFloat(aVal.replace(/[^0-9.]/g, ''));
                 } else if (sortField === 'date') {
                     return direction === 'asc'
-                        ? parseDateTime(aValue) - parseDateTime(bValue)
-                        : parseDateTime(bValue) - parseDateTime(aValue);
+                        ? parseDateTime(aVal) - parseDateTime(bVal)
+                        : parseDateTime(bVal) - parseDateTime(aVal);
                 } else {
                     return direction === 'asc'
-                        ? aValue.localeCompare(bValue)
-                        : bValue.localeCompare(aValue);
+                        ? aVal.localeCompare(bVal)
+                        : bVal.localeCompare(aVal);
                 }
             });
 
-            rows.forEach(row => table.appendChild(row));
+            tableRows.forEach(row => table.appendChild(row));
         });
     });
 
-    // Filtering functionality
-    const filterDropdowns = document.querySelectorAll('.filter-dropdown .dropdown-content div');
-    filterDropdowns.forEach(filter => {
-        filter.addEventListener('click', function () {
-            const filterField = this.getAttribute('data-filter'); // e.g., "date"
-            const filterValue = this.getAttribute('data-value'); // e.g., "today"
+    // 🔽 Filter Dropdown Logic
+    filterDropdowns.forEach(dropdown => {
+        const button = dropdown.querySelector('.filter-btn');
+        const items = dropdown.querySelectorAll('.dropdown-content div');
 
-            rows.forEach(row => {
-                const cellValue = row.querySelector(`td:nth-child(${getColumnIndex(filterField)})`)?.textContent.trim();
+        items.forEach(item => {
+            item.addEventListener('click', function () {
+                items.forEach(i => i.classList.remove('active-filter'));
+                this.classList.add('active-filter');
 
-                let showRow = false;
+                const filterField = this.getAttribute('data-filter');
+                const filterValue = this.getAttribute('data-value');
+                const filterText = this.textContent;
 
-                if (filterField === 'date') {
-                    const now = new Date();
-                    const oneWeekAgo = new Date(now);
-                    oneWeekAgo.setDate(now.getDate() - 7);
-                    const oneMonthAgo = new Date(now);
-                    oneMonthAgo.setMonth(now.getMonth() - 1);
-                    const rowDate = parseDateTime(cellValue);
-
-                    if (filterValue === 'today') {
-                        showRow = isSameDay(rowDate, now);
-                    } else if (filterValue === 'this-week') {
-                        showRow = rowDate >= oneWeekAgo && rowDate <= now;
-                    } else if (filterValue === 'last-week') {
-                        const twoWeeksAgo = new Date(now);
-                        twoWeeksAgo.setDate(now.getDate() - 14);
-                        showRow = rowDate >= twoWeeksAgo && rowDate < oneWeekAgo;
-                    } else if (filterValue === 'last-month') {
-                        const twoMonthsAgo = new Date(now);
-                        twoMonthsAgo.setMonth(now.getMonth() - 2);
-                        showRow = rowDate >= twoMonthsAgo && rowDate < oneMonthAgo;
-                    } else if (filterValue === 'older') {
-                        showRow = rowDate < oneMonthAgo;
-                    } else {
-                        showRow = true; // Default: show all rows
-                    }
+                // Update filter button
+                if (filterValue !== 'all') {
+                    button.innerHTML = `<span class="filter-label">${filterText}</span><i class="fas fa-caret-down"></i>`;
+                    button.classList.add('active-filter-btn');
                 } else {
-                    // Default filtering for other fields
-                    showRow = filterValue === 'all' || cellValue?.includes(filterValue);
+                    button.innerHTML = `<i class="fas fa-filter"></i>`;
+                    button.classList.remove('active-filter-btn');
                 }
 
-                row.style.display = showRow ? '' : 'none';
+                // Filter rows
+                tableRows.forEach(row => {
+                    const cellValue = row.querySelector(`td:nth-child(${getColumnIndex(filterField)})`)?.textContent.trim();
+                    let showRow = true;
+
+                    if (filterField === 'date') {
+                        const now = new Date();
+                        const rowDate = parseDateTime(cellValue);
+                        const oneWeekAgo = new Date(now);
+                        oneWeekAgo.setDate(now.getDate() - 7);
+                        const oneMonthAgo = new Date(now);
+                        oneMonthAgo.setMonth(now.getMonth() - 1);
+
+                        if (filterValue === 'today') {
+                            showRow = isSameDay(rowDate, now);
+                        } else if (filterValue === 'this-week') {
+                            showRow = rowDate >= oneWeekAgo && rowDate <= now;
+                        } else if (filterValue === 'last-week') {
+                            const twoWeeksAgo = new Date(now);
+                            twoWeeksAgo.setDate(now.getDate() - 14);
+                            showRow = rowDate >= twoWeeksAgo && rowDate < oneWeekAgo;
+                        } else if (filterValue === 'last-month') {
+                            const twoMonthsAgo = new Date(now);
+                            twoMonthsAgo.setMonth(now.getMonth() - 2);
+                            showRow = rowDate >= twoMonthsAgo && rowDate < oneMonthAgo;
+                        } else if (filterValue === 'older') {
+                            showRow = rowDate < oneMonthAgo;
+                        }
+                    } else {
+                        showRow = filterValue === 'all' || cellValue?.includes(filterValue);
+                    }
+
+                    row.style.display = showRow ? '' : 'none';
+                });
             });
         });
     });
+
+    // ⏰ Clock Updater
+    function updateClock() {
+        const now = new Date();
+        let hours = now.getHours();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12 || 12;
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+
+        document.querySelector('.hours').textContent = hours;
+        document.querySelector('.minutes').textContent = minutes;
+        document.querySelector('.seconds').textContent = seconds;
+        document.querySelector('.time-ampm').textContent = ampm;
+
+        const hourHand = document.querySelector('.clock-hour-hand');
+        const minuteHand = document.querySelector('.clock-minute-hand');
+        const secondHand = document.querySelector('.clock-second-hand');
+        hourHand.style.transform = `rotate(${(hours * 30) + (now.getMinutes() * 0.5)}deg)`;
+        minuteHand.style.transform = `rotate(${now.getMinutes() * 6}deg)`;
+        secondHand.style.transform = `rotate(${now.getSeconds() * 6}deg)`;
+    }
+
+    updateClock();
+    setInterval(updateClock, 1000);
 
 
     
@@ -2694,7 +2597,7 @@ document.addEventListener('DOMContentLoaded', function() {
 .time-slots-title {
     font-size: 18px;
     font-weight: bold;
-    color: var(--text-color);
+    color: var (--text-color);
     margin-bottom: 10px;
     display: flex;
     align-items: center;
@@ -2855,8 +2758,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
 
-
-
     .time-slot.unavailable {
     background-color: #f5f5f5;
     color: #999;
@@ -2865,18 +2766,9 @@ document.addEventListener('DOMContentLoaded', function() {
     opacity: 0.7;
 }
 
-.time-slot.unavailable::after {
-    content: "Past Time";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 10px;
-    color: #ff5555;
-    white-space: nowrap;
-}
 
-    
+
+
 </style>
 
 
@@ -2885,17 +2777,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 <script>
-
-    
     document.addEventListener('DOMContentLoaded', function() {
-
-        const bookedAppointments = [
-        // Format: { date: Date object, time: "9:00 AM", status: "pending/completed" }
-        { date: new Date(2024, 2, 15), time: "9:00 AM", status: "pending" },
-        { date: new Date(2024, 2, 15), time: "10:00 AM", status: "completed" },
-        { date: new Date(2024, 2, 16), time: "2:00 PM", status: "pending" }
-    ];
-
     // New Appointment Modal Functionality
     const newAppointmentBtn = document.getElementById('newAppointmentBtn');
     const newAppointmentModal = document.getElementById('newAppointmentModal');
@@ -2919,7 +2801,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const nextMonthBtn = document.getElementById('next-month');
     const timeSlots = document.querySelectorAll('.time-slot');
     
-    
     let currentMonth = new Date().getMonth();
     let currentYear = new Date().getFullYear();
     let selectedDate = null;
@@ -2928,173 +2809,191 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize calendar
     function initializeCalendar() {
-    generateCalendar(currentMonth, currentYear);
-}
-
-function generateCalendar(month, year) {
-    calendarDates.innerHTML = '';
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time part for comparison
-
-    currentMonthDisplay.textContent = new Date(year, month).toLocaleDateString('en-US', {
-        month: 'long',
-        year: 'numeric'
-    });
-
-    // Add empty cells for days before the first day of the month
-    for (let i = 0; i < firstDay; i++) {
-        const emptyCell = document.createElement('div');
-        emptyCell.classList.add('calendar-date', 'other-month');
-        calendarDates.appendChild(emptyCell);
+        generateCalendar(currentMonth, currentYear);
     }
 
-    // Add cells for each day of the month
-    for (let day = 1; day <= daysInMonth; day++) {
-        const dateCell = document.createElement('div');
-        dateCell.classList.add('calendar-date');
-        dateCell.textContent = day;
+    function generateCalendar(month, year) {
+        calendarDates.innerHTML = '';
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Reset time part for comparison
 
-        const cellDate = new Date(year, month, day);
-        cellDate.setHours(0, 0, 0, 0); // Reset time part for comparison
-
-        // Only disable dates before today
-        if (cellDate < today) {
-            dateCell.classList.add('disabled-date');
-        } else if (cellDate.toDateString() === today.toDateString()) {
-            dateCell.classList.add('today');
-        }
-
-        dateCell.addEventListener('click', function() {
-            if (!this.classList.contains('disabled-date')) {
-                document.querySelectorAll('.calendar-date').forEach(d => d.classList.remove('selected'));
-                this.classList.add('selected');
-                
-                const day = parseInt(this.textContent);
-                selectedDate = new Date(currentYear, currentMonth, day);
-                
-                selectedDateText.textContent = selectedDate.toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    month: 'long',
-                    day: 'numeric',
-                    year: 'numeric'
-                });
-
-                // Update time slot availability when date is selected
-                updateTimeSlotsAvailability(selectedDate);
-            }
+        currentMonthDisplay.textContent = new Date(year, month).toLocaleDateString('en-US', {
+            month: 'long',
+            year: 'numeric'
         });
 
-        calendarDates.appendChild(dateCell);
-    }
-}
+        // Add empty cells for days before the first day of the month
+        for (let i = 0; i < firstDay; i++) {
+            const emptyCell = document.createElement('div');
+            emptyCell.classList.add('calendar-date', 'other-month');
+            calendarDates.appendChild(emptyCell);
+        }
 
-// New function to update time slot availability
-function updateTimeSlotsAvailability(selectedDate) {
+        // Add cells for each day of the month
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateCell = document.createElement('div');
+            dateCell.classList.add('calendar-date');
+            dateCell.textContent = day;
+
+            const cellDate = new Date(year, month, day);
+            cellDate.setHours(0, 0, 0, 0); // Reset time part for comparison
+
+            // Only disable dates before today
+            if (cellDate < today) {
+                dateCell.classList.add('disabled-date');
+            } else if (cellDate.toDateString() === today.toDateString()) {
+                dateCell.classList.add('today');
+            }
+
+            dateCell.addEventListener('click', function() {
+                if (!this.classList.contains('disabled-date')) {
+                    document.querySelectorAll('.calendar-date').forEach(d => d.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    const day = parseInt(this.textContent);
+                    selectedDate = new Date(currentYear, currentMonth, day);
+                    
+                    selectedDateText.textContent = selectedDate.toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric'
+                    });
+
+                    // Update time slot availability when date is selected
+                    updateTimeSlotsAvailability(selectedDate);
+                }
+            });
+
+            calendarDates.appendChild(dateCell);
+        }
+    }
+
+    // Update time slot availability based on selected date
+    function updateTimeSlotsAvailability(selectedDate) {
     const now = new Date();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
-    // Reset all time slots
-    timeSlots.forEach(slot => {
-        slot.classList.remove('unavailable');
-        slot.disabled = false;
+    // Get all existing appointments
+    const existingAppointments = Array.from(document.querySelectorAll('.appointment-row')).map(row => {
+        const dateTimeText = row.querySelector('td:nth-child(1)').textContent;
+        const [datePart, timePart] = dateTimeText.split(' - ');
+        return {
+            date: new Date(datePart + ' ' + timePart),
+            time: timePart
+        };
     });
-
-    // If selected date is today, disable past time slots
-    if (selectedDate.toDateString() === today.toDateString()) {
+        
+        // Reset all time slots
         timeSlots.forEach(slot => {
-            const slotTime = slot.textContent;
-            const [time, period] = slotTime.split(' ');
-            let [hours, minutes] = time.split(':').map(Number);
-            
-            // Convert to 24-hour format
-            if (period === 'PM' && hours !== 12) {
-                hours += 12;
-            } else if (period === 'AM' && hours === 12) {
-                hours = 0;
-            }
-            
-            // Create a Date object for the time slot
-            const slotDateTime = new Date(now);
-            slotDateTime.setHours(hours, minutes, 0, 0);
-            
-            // Disable if time slot is in the past
-            if (slotDateTime < now) {
-                slot.classList.add('unavailable');
-                slot.disabled = true;
-            }
+            slot.classList.remove('unavailable');
+            slot.disabled = false;
+            slot.title = ''; // Reset tooltip
         });
-    }
-    // Check for booked appointments on the selected date
-        const bookingsForDate = bookedAppointments.filter(appt => 
-            appt.date.toDateString() === selectedDate.toDateString()
-        );
-    // Mark booked time slots as unavailable
-        bookingsForDate.forEach(booking => {
-            timeSlots.forEach(slot => {
-                if (slot.textContent === booking.time) {
-                    markTimeSlotUnavailable(slot, "Booked");
-                }
-            });
-        });
-    }
 
-    function markTimeSlotUnavailable(slot, reason) {
+        // Check if selected date is today
+    const isToday = selectedDate.toDateString() === today.toDateString();
+
+timeSlots.forEach(slot => {
+    const slotTime = slot.textContent;
+    const [time, period] = slotTime.split(' ');
+    let [hours, minutes] = time.split(':').map(Number);
+    
+    // Convert to 24-hour format
+    if (period === 'PM' && hours !== 12) {
+        hours += 12;
+    } else if (period === 'AM' && hours === 12) {
+        hours = 0;
+    }
+    
+    // Create a Date object for the time slot
+    const slotDateTime = new Date(selectedDate);
+    slotDateTime.setHours(hours, minutes, 0, 0);
+    
+    // Check for past time (only if date is today)
+    if (isToday && slotDateTime < now) {
         slot.classList.add('unavailable');
         slot.disabled = true;
-        
-        // Add tooltip with reason
-        const tooltip = document.createElement('span');
-        tooltip.className = 'unavailable-tooltip';
-        tooltip.textContent = reason;
-        slot.appendChild(tooltip);
+        slot.title = '';
+        return;
     }
-}
-
-// Initialize time slots when modal opens
-document.getElementById('newAppointmentBtn').addEventListener('click', function() {
-    newAppointmentModal.style.display = 'block';
-    document.body.style.overflow = 'hidden';
-    initializeCalendar();
     
-    // Reset selected date and time
-    selectedDate = null;
-    selectedTime = null;
-    document.querySelectorAll('.calendar-date.selected').forEach(el => el.classList.remove('selected'));
-    document.querySelectorAll('.time-slot.active').forEach(el => el.classList.remove('active'));
-    selectedDateText.textContent = 'No date selected';
-    selectedTimeText.textContent = 'No time selected';
-    
-    // Enable all time slots initially
-    timeSlots.forEach(slot => {
-        slot.classList.remove('unavailable');
-        slot.disabled = false;
+    // Check for booked slots
+    const isBooked = existingAppointments.some(appt => {
+        return appt.date.toDateString() === selectedDate.toDateString() && 
+               appt.timeString === slotTime;
     });
+    
+    if (isBooked) {
+        slot.classList.add('unavailable');
+        slot.disabled = true;
+        slot.title = 'Booked Slot'; // Tooltip for booked slot
+    }
 });
 
-    // Month navigation
-    prevMonthBtn.addEventListener('click', function() {
-        currentMonth--;
-        if (currentMonth < 0) {
-            currentMonth = 11;
-            currentYear--;
+            
+            // Disable if time slot is already booked today
+            const dateKey = selectedDate.toDateString();
+    existingAppointments.forEach(appt => {
+        if (appt.date.toDateString() === dateKey) {
+            timeSlots.forEach(slot => {
+                if (slot.textContent === appt.time) {
+                    slot.classList.add('unavailable');
+                    slot.disabled = true;
+                    slot.title = 'Booked Slot'; // Tooltip for booked slot
+                }
+            });
         }
-        generateCalendar(currentMonth, currentYear);
     });
+}
 
-    nextMonthBtn.addEventListener('click', function() {
-        currentMonth++;
-        if (currentMonth > 11) {
-            currentMonth = 0;
-            currentYear++;
+    // Validate before proceeding to next step
+    function validateCurrentStep() {
+        if (currentStep === 0) { // Date & Time step
+            if (!selectedDate) {
+                showWarning('Please select a date for your appointment.');
+                return false;
+            }
+
+            if (!selectedTime) {
+                showWarning('Please select a time slot for your appointment.');
+                return false;
+            }
+
+            // Additional check for past times
+            const now = new Date();
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            if (selectedDate.toDateString() === today.toDateString()) {
+                const selectedSlot = document.querySelector('.time-slot.active');
+                if (selectedSlot && selectedSlot.classList.contains('unavailable')) {
+                    showWarning('The selected time slot is no longer available. Please choose another time.');
+                    return false;
+                }
+            }
+            
+            return true;
+        } else if (currentStep === 1) { // Procedure step
+            if (!procedureSelect.value) {
+                showWarning('Please select a procedure for your appointment.');
+                return false;
+            }
+            return true;
         }
-        generateCalendar(currentMonth, currentYear);
-    });
+        return true;
+    }
 
     // Navigate between steps
     function goToStep(stepIndex) {
+        // Validate current step before proceeding
+        if (stepIndex > currentStep && !validateCurrentStep()) {
+            return;
+        }
+
         // Hide current step
         steps[currentStep].classList.remove('active');
         progressSteps[currentStep].classList.remove('active');
@@ -3127,20 +3026,9 @@ document.getElementById('newAppointmentBtn').addEventListener('click', function(
     }
 
     // Next button handler
-    nextStepBtn.addEventListener('click', function () {
-    if (currentStep === 0) {
-        if (!selectedDate) {
-            showWarning('Please select a date for your appointment.');
-            return;
-        }
-
-        if (!selectedTime) {
-            showWarning('Please select a time slot for your appointment.');
-            return;
-        }
-    }
-    goToStep(currentStep + 1);
-});
+    nextStepBtn.addEventListener('click', function() {
+        goToStep(currentStep + 1);
+    });
 
     // Previous button handler
     prevStepBtn.addEventListener('click', function() {
@@ -3167,7 +3055,7 @@ document.getElementById('newAppointmentBtn').addEventListener('click', function(
         // Add to appointments table
         addAppointmentToTable(newAppointment);
         
-        // showConfirmation message
+        // Show confirmation message
         showConfirmation('Appointment booked successfully!');
         
         // Close and reset modal
@@ -3194,12 +3082,19 @@ document.getElementById('newAppointmentBtn').addEventListener('click', function(
         `;
         
         // Add to top of table
-        tableBody.insertBefore(newRow, tableBody.firstChild);
+    tableBody.insertBefore(newRow, tableBody.firstChild);
+    
+    // Update time slots availability if viewing the same date
+    if (selectedDate) {
+        updateTimeSlotsAvailability(selectedDate);
     }
+}
 
     // Time slot selection
     timeSlots.forEach(slot => {
         slot.addEventListener('click', function() {
+            if (this.classList.contains('unavailable')) return;
+            
             timeSlots.forEach(s => s.classList.remove('active'));
             this.classList.add('active');
             selectedTime = this.textContent;
@@ -3207,11 +3102,23 @@ document.getElementById('newAppointmentBtn').addEventListener('click', function(
         });
     });
 
-    // Open modal
-    newAppointmentBtn.addEventListener('click', function() {
-        newAppointmentModal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-        initializeCalendar();
+    // Month navigation
+    prevMonthBtn.addEventListener('click', function() {
+        currentMonth--;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        }
+        generateCalendar(currentMonth, currentYear);
+    });
+
+    nextMonthBtn.addEventListener('click', function() {
+        currentMonth++;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        generateCalendar(currentMonth, currentYear);
     });
 
     // Close and reset modal
@@ -3234,6 +3141,27 @@ document.getElementById('newAppointmentBtn').addEventListener('click', function(
         // Reset to first step
         goToStep(0);
     }
+
+    // Open modal
+    newAppointmentBtn.addEventListener('click', function() {
+        newAppointmentModal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        initializeCalendar();
+        
+        // Reset selected date and time
+        selectedDate = null;
+        selectedTime = null;
+        document.querySelectorAll('.calendar-date.selected').forEach(el => el.classList.remove('selected'));
+        document.querySelectorAll('.time-slot.active').forEach(el => el.classList.remove('active'));
+        selectedDateText.textContent = 'No date selected';
+        selectedTimeText.textContent = 'No time selected';
+        
+        // Enable all time slots initially
+        timeSlots.forEach(slot => {
+            slot.classList.remove('unavailable');
+            slot.disabled = false;
+        });
+    });
 
     // Close modal
     closeModal.addEventListener('click', closeAndResetModal);
@@ -3280,175 +3208,35 @@ function showWarning(message) {
 }
 
 // Show success message
-function showSuccess(message) {
-    alert(message); // In a real app, you might want a prettier notification
-}
-</script>
+function showConfirmation(message) {
+    const confirmationModal = document.getElementById('confirmationModal');
+    const confirmationMessage = document.getElementById('confirmationMessage');
+    const confirmationOkBtn = document.getElementById('confirmationOkBtn');
 
+    confirmationMessage.textContent = message;
+    confirmationModal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const newAppointmentModal = document.getElementById('newAppointmentModal');
-    const closeModal = newAppointmentModal.querySelector('.close-modal');
-    const confirmBtn = document.getElementById('confirm-appointment-btn');
-    const steps = document.querySelectorAll('.appointment-step');
-    const progressSteps = document.querySelectorAll('.progress-step');
-    const procedureSelect = document.getElementById('procedure-select');
-    const appointmentNotes = document.getElementById('appointment-notes');
-    const selectedDateText = document.getElementById('selected-date-text');
-    const selectedTimeText = document.getElementById('selected-time-text');
-    const appointmentsTable = document.querySelector('.treatment-history-container table tbody');
-    const timeSlots = document.querySelectorAll('.time-slot');
-    let selectedDate = null;
-    let selectedTime = null;
-    let currentStep = 0;
-
-    // Reset modal state
-    function resetModal() {
-    steps.forEach(step => step.classList.remove('active'));
-    progressSteps.forEach(step => step.classList.remove('active'));
-    steps[0].classList.add('active');
-    progressSteps[0].classList.add('active');
-    procedureSelect.value = '';
-    notesInput.value = '';
-    selectedDate = null;
-    selectedTime = null;
-    document.querySelectorAll('.calendar-date.selected').forEach(el => el.classList.remove('selected'));
-    document.querySelectorAll('.time-slot.active').forEach(el => el.classList.remove('active'));
-    selectedDateText.textContent = 'No date selected';
-    selectedTimeText.textContent = 'No time selected';
-}
-
-    closeModal.addEventListener('click', function () {
-    newAppointmentModal.style.display = 'none';
-    document.body.style.overflow = 'auto';
-    resetAppointmentModal(); // Reset modal state
-});
-
-window.addEventListener('click', function (event) {
-    if (event.target === newAppointmentModal) {
-        newAppointmentModal.style.display = 'none';
+    // Close modal on OK button click
+    confirmationOkBtn.addEventListener('click', function() {
+        confirmationModal.style.display = 'none';
         document.body.style.overflow = 'auto';
-        resetAppointmentModal(); // Reset modal state
-    }
-});
+    });
 
-    // Confirm appointment
-    confirmBtn.addEventListener('click', function () {
-        if (!selectedDate || !selectedTime || !procedureSelect.value) {
-            showConfirmation('Please complete all fields before confirming.');
-            return;
+    // Close modal on close button click
+    confirmationModal.querySelector('.close-modal').addEventListener('click', function() {
+        confirmationModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    });
+
+    // Close modal when clicking outside the modal content
+    window.addEventListener('click', function(event) {
+        if (event.target === confirmationModal) {
+            confirmationModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
         }
-
-        // Add new appointment to the Appointments Card
-        const newRow = document.createElement('tr');
-        newRow.classList.add('appointment-row');
-        newRow.innerHTML = `
-            <td>${selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} - ${selectedTime}</td>
-            <td>${procedureSelect.value}</td>
-            <td>₱1,500</td> <!-- Placeholder cost -->
-            <td>Dr. Resurreccion</td> <!-- Placeholder dentist -->
-            <td><span class="status-badge status-upcoming">Upcoming</span></td>
-            <td>
-                <button class="action-btn view-btn"><i class="fas fa-eye"></i></button>
-                <button class="action-btn download-btn"><i class="fas fa-download"></i></button>
-            </td>
-        `;
-
-        // Insert the new row at the top of the table
-        appointmentsTable.prepend(newRow);
-
-        // Close modal and reset state
-        showConfirmation('Appointment booked successfully!');
-        newAppointmentModal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-        resetModal();
     });
-
-    // Handle date selection
-    document.getElementById('calendar-dates').addEventListener('click', function (event) {
-    const target = event.target.closest('.calendar-date');
-    if (target && !target.classList.contains('disabled-date')) {
-        document.querySelectorAll('.calendar-date').forEach(el => el.classList.remove('selected'));
-        target.classList.add('selected');
-        selectedDate = new Date(currentYear, currentMonth, parseInt(target.textContent));
-        
-        selectedDateText.textContent = selectedDate.toLocaleDateString('en-US', {
-            weekday: 'long',
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric'
-        });
-    }
-});
-
-    // Handle time slot selection
-    timeSlots.forEach(slot => {
-        slot.addEventListener('click', function () {
-            timeSlots.forEach(el => el.classList.remove('active'));
-            this.classList.add('active');
-            selectedTime = this.textContent;
-            selectedTimeText.textContent = selectedTime;
-        });
-    });
-
-    
-    
-
-    // If all validations pass, proceed to the next step
-    goToStep(currentStep + 1);
-});
-
-function goToStep(stepIndex) {
-    // Remove active class from the current step
-    steps[currentStep].classList.remove('active');
-    progressSteps[currentStep].classList.remove('active');
-
-    // Add active class to the new step
-    steps[stepIndex].classList.add('active');
-    progressSteps[stepIndex].classList.add('active');
-    currentStep = stepIndex;
-
-    // Enable/disable navigation buttons
-    prevStepBtn.disabled = currentStep === 0;
-    nextStepBtn.style.display = currentStep === steps.length - 1 ? 'none' : 'inline-flex';
-    confirmBtn.style.display = currentStep === steps.length - 1 ? 'inline-flex' : 'none';
-
-    // Update confirmation step (Step 3)
-    if (currentStep === steps.length - 1) {
-        document.getElementById('confirm-date').textContent = selectedDate
-            ? selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
-            : 'No date selected';
-        document.getElementById('confirm-time').textContent = selectedTime || 'No time selected';
-        document.getElementById('confirm-procedure').textContent = procedureSelect.value || 'No procedure selected';
-        document.getElementById('confirm-notes').textContent = notesInput.value || 'No notes provided';
-    }
 }
-
-
-
-    // Open modal
-    document.getElementById('newAppointmentBtn').addEventListener('click', function () {
-        newAppointmentModal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-
-        // Ensure modal state is reset properly
-        goToStep(0);
-    });
-
 </script>
 
 
